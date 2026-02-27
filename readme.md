@@ -2,6 +2,8 @@
 
 基于 `.NET 8 + WPF` 的 Windows 桌面提醒应用。  
 支持一次性/周期性提醒、系统托盘驻留、开机自启动、可配置提醒弹窗位置，并支持单文件 `exe` 打包发布。
+下载地址：[点击下载沙漏时钟提醒](沙漏时钟提醒.exe)
+
 ![alt text](screenshot/image-1.png)
 ![alt text](screenshot/image-2.png)
 ![alt text](screenshot/image-3.png)

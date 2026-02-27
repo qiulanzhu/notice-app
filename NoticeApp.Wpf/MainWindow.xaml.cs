@@ -118,7 +118,7 @@ public partial class MainWindow : Window
         _trayMenu.Items.Add("打开主界面", null, (_, _) => Dispatcher.Invoke(ShowFromTray));
         _trayMenu.Items.Add("退出程序", null, (_, _) => Dispatcher.Invoke(ExitApplication));
 
-        _notifyIcon.Text = "桌面提醒";
+        _notifyIcon.Text = "沙漏时钟提醒";
         _notifyIcon.Icon = BuildTrayIcon();
         _notifyIcon.ContextMenuStrip = _trayMenu;
         _notifyIcon.Visible = true;
@@ -471,7 +471,7 @@ public partial class MainWindow : Window
         }
 
         _trayHintShown = true;
-        _notifyIcon.ShowBalloonTip(1500, "桌面提醒", "应用正在系统托盘运行。", Forms.ToolTipIcon.Info);
+        _notifyIcon.ShowBalloonTip(1500, "沙漏时钟提醒", "应用正在系统托盘运行。", Forms.ToolTipIcon.Info);
     }
 
     private void ShowFromTray()

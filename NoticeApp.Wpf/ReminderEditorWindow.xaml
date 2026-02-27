@@ -1,7 +1,7 @@
 <Window x:Class="NoticeApp.Wpf.ReminderEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="提醒编辑"
+        Title="沙漏时钟提醒 - 提醒编辑"
         Width="700"
         Height="650"
         MinWidth="620"

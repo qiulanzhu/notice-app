@@ -12,7 +12,7 @@ public partial class App : System.Windows.Application
             ErrorLogger.Log(args.Exception, "App.DispatcherUnhandledException");
             System.Windows.MessageBox.Show(
                 $"程序发生异常，已记录日志:\n{ErrorLogger.ErrorLogPath}\n\n{args.Exception.Message}",
-                "Notice App",
+                "沙漏时钟提醒",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
             args.Handled = true;

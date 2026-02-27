@@ -1,7 +1,11 @@
-# 桌面提醒（NoticeApp.Wpf）
+# 沙漏时钟提醒.exe
 
 基于 `.NET 8 + WPF` 的 Windows 桌面提醒应用。  
 支持一次性/周期性提醒、系统托盘驻留、开机自启动、可配置提醒弹窗位置，并支持单文件 `exe` 打包发布。
+![alt text](screenshot/image-1.png)
+![alt text](screenshot/image-2.png)
+![alt text](screenshot/image-3.png)
+![alt text](screenshot/image.png)
 
 ## 1. 功能概览
 
@@ -148,4 +152,3 @@ Rename-Item -LiteralPath 'artifacts/publish-single/NoticeApp.Wpf.exe' -NewName '
 ## 11. 额外文档
 
 - 详细打包说明：`手动打包流程.md`
-

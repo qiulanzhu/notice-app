@@ -1,6 +1,7 @@
 ﻿<Window x:Class="NoticeApp.Wpf.NotificationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="沙漏时钟提醒"
         Width="360"
         Height="154"
         WindowStyle="None"

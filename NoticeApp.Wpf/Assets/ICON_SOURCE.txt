@@ -1,0 +1,8 @@
+Icon source:
+- Source image: user-provided local file
+  Local file: NoticeApp.Wpf/图标.png
+- Local build: padded to square for ICO export, then generated PNG + multi-size ICO
+- Files:
+  - icon-master-userstyle.png (1024x1024)
+  - icon-bell.png (512x512)
+  - app.ico (16/24/32/48/64/128/256)

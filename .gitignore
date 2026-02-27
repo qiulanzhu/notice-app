@@ -1,0 +1,40 @@
+# =========================
+# .NET / C#
+# =========================
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[xX]64/
+**/[xX]86/
+
+# Build / publish output
+artifacts/
+NoticeApp.Wpf/artifacts/
+
+# Visual Studio / IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Logs / temporary files
+*.log
+*.tmp
+*.temp
+
+# OS generated
+Thumbs.db
+Desktop.ini
+
+# Project temporary icon/source files
+NoticeApp.Wpf/Assets/_*.png
+NoticeApp.Wpf/Assets/_*.txt

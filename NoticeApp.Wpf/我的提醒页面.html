@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>桌面提醒 - 卡片视图版</title>
+        <!-- 引入 FontAwesome 图标库 -->
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-color: #0066de; /* 微软蓝风格 */
+                --primary-hover: #0056b3;
+                --bg-color: #f0f2f5;
+                --card-bg: #ffffff;
+                --text-main: #333333;
+                --text-secondary: #888888; /* 更浅的灰色用于描述 */
+                --border-color: #e5e7eb;
+                --danger-color: #ff4d4f; /* 鲜艳的红色 */
+                --radius: 12px; /* 更大的圆角 */
+                --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+                outline: none;
+            }
+
+            body {
+                background-color: #eef2f5;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: var(--text-main);
+            }
+
+            /* 主窗口 */
+            .app-window {
+                width: 900px;
+                height: 600px;
+                background: #fff;
+                border-radius: var(--radius);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+                display: flex;
+                overflow: hidden;
+            }
+
+            /* 侧边栏 */
+            .sidebar {
+                width: 200px;
+                background-color: #fafafa;
+                border-right: 1px solid var(--border-color);
+                display: flex;
+                flex-direction: column;
+                padding: 20px 0;
+            }
+
+            .app-title {
+                font-size: 18px;
+                font-weight: bold;
+                padding: 0 24px 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--text-main);
+            }
+
+            .nav-item {
+                padding: 12px 24px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: #666;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .nav-item:hover {
+                background-color: #f0f0f0;
+            }
+            .nav-item.active {
+                background-color: #e6f0ff;
+                color: var(--primary-color);
+                border-right: 3px solid var(--primary-color);
+            }
+
+            /* 内容区 */
+            .main-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                background: #f5f7fa; /* 内容区背景灰一点，凸显卡片 */
+            }
+
+            .header {
+                height: 50px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 0 16px;
+                background: #fff;
+                border-bottom: 1px solid #eee;
+            }
+
+            .window-controls button {
+                border: none;
+                background: transparent;
+                width: 30px;
+                height: 30px;
+                cursor: pointer;
+                color: #666;
+            }
+            .window-controls button:hover {
+                background: #eee;
+                border-radius: 4px;
+            }
+            .window-controls button.close-btn:hover {
+                background: var(--danger-color);
+                color: white;
+            }
+
+            .page {
+                display: none;
+                flex: 1;
+                padding: 24px 32px;
+                overflow-y: auto;
+                flex-direction: column;
+            }
+            .page.active-page {
+                display: flex;
+            }
+
+            /* 标题区 */
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+            h2 {
+                font-size: 20px;
+                font-weight: 600;
+                color: #333;
+            }
+
+            /* === 核心修改：卡片列表样式 === */
+            .reminder-list {
+                display: flex;
+                flex-direction: column;
+                gap: 16px; /* 卡片间距 */
+                padding-bottom: 20px;
+            }
+
+            .reminder-card {
+                background: #fff;
+                padding: 24px; /* 增加内边距 */
+                border-radius: var(--radius);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                transition: all 0.2s;
+                border: 1px solid transparent;
+            }
+
+            .reminder-card:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                transform: translateY(-1px);
+            }
+
+            /* 卡片左侧：开关 + 信息 */
+            .card-left {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .card-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .card-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .card-meta {
+                font-size: 13px;
+                color: #999;
+            }
+
+            /* 卡片右侧：操作按钮 */
+            .card-actions {
+                display: flex;
+                gap: 16px;
+            }
+
+            .action-text {
+                font-size: 14px;
+                cursor: pointer;
+                background: none;
+                border: none;
+                transition: opacity 0.2s;
+            }
+
+            .action-edit {
+                color: #666;
+            }
+            .action-edit:hover {
+                color: var(--primary-color);
+            }
+
+            .action-delete {
+                color: var(--danger-color);
+                opacity: 0.8;
+            }
+            .action-delete:hover {
+                opacity: 1;
+                text-decoration: underline;
+            }
+
+            /* iOS Toggle Switch 样式 (完美复刻) */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 44px;
+                height: 24px;
+                flex-shrink: 0;
+            }
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: 0.3s;
+                border-radius: 24px;
+            }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 50%;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            input:checked + .slider {
+                background-color: var(--primary-color);
+            }
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
+
+            /* 按钮通用 */
+            .btn {
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                border: 1px solid transparent;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.2s;
+            }
+            .btn-primary {
+                background: var(--primary-color);
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 102, 222, 0.2);
+            }
+            .btn-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            /* 模态框 */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(2px);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 100;
+            }
+            .modal-overlay.open {
+                display: flex;
+                animation: fadeIn 0.2s;
+            }
+            .modal {
+                background: white;
+                width: 400px;
+                padding: 24px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                transform: scale(0.95);
+                transition: transform 0.2s;
+            }
+            .modal-overlay.open .modal {
+                transform: scale(1);
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 14px;
+                color: #666;
+            }
+            .form-control {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            .form-control:focus {
+                border-color: var(--primary-color);
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 24px;
+            }
+            .btn-secondary {
+                background: #f5f5f5;
+                color: #333;
+            }
+            .btn-secondary:hover {
+                background: #e0e0e0;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* 空状态 */
+            .empty-state {
+                text-align: center;
+                color: #999;
+                padding: 40px;
+                font-size: 14px;
+            }
+
+            /* Toast */
+            .toast {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 10px 24px;
+                border-radius: 50px;
+                font-size: 14px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                pointer-events: none;
+            }
+            .toast.show {
+                opacity: 1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app-window">
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <div class="app-title">
+                    <i class="fa-solid fa-clock"></i> 桌面提醒
+                </div>
+                <nav>
+                    <div
+                        class="nav-item active"
+                        onclick="switchPage('home', this)"
+                    >
+                        <i class="fa-solid fa-list-check"></i> 我的提醒
+                    </div>
+                    <div
+                        class="nav-item"
+                        onclick="switchPage('settings', this)"
+                    >
+                        <i class="fa-solid fa-gear"></i> 系统设置
+                    </div>
+                </nav>
+            </div>
+
+            <!-- 主内容 -->
+            <div class="main-content">
+                <div class="header">
+                    <div class="window-controls">
+                        <button><i class="fa-solid fa-minus"></i></button>
+                        <button class="close-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 列表页 -->
+                <div id="page-home" class="page active-page">
+                    <div class="page-header">
+                        <h2>我的提醒</h2>
+                        <button
+                            class="btn btn-primary"
+                            onclick="openModal('add')"
+                        >
+                            <i class="fa-solid fa-plus"></i> 添加提醒
+                        </button>
+                    </div>
+
+                    <!-- 卡片列表容器 -->
+                    <div id="reminder-list" class="reminder-list">
+                        <!-- JS 渲染卡片 -->
+                    </div>
+                </div>
+
+                <!-- 设置页 (保持原样) -->
+                <div id="page-settings" class="page">
+                    <div class="page-header"><h2>系统设置</h2></div>
+                    <div
+                        style="
+                            background: #fff;
+                            padding: 20px;
+                            border-radius: 8px;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 20px;
+                            "
+                        >
+                            <span>开机自启动</span>
+                            <label class="switch"
+                                ><input type="checkbox" /><span
+                                    class="slider"
+                                ></span
+                            ></label>
+                        </div>
+                        <div style="color: #999; font-size: 13px">
+                            更多设置开发中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 弹窗 -->
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <span id="modal-title">添加提醒</span>
+                    <span
+                        style="cursor: pointer; color: #999"
+                        onclick="closeModal()"
+                        >×</span
+                    >
+                </div>
+                <input type="hidden" id="input-id" />
+                <div class="form-group">
+                    <label>标题</label>
+                    <input
+                        type="text"
+                        id="input-title"
+                        class="form-control"
+                        placeholder="例如：点餐"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>备注描述</label>
+                    <input
+                        type="text"
+                        id="input-desc"
+                        class="form-control"
+                        placeholder="不要忘记点外卖"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <select id="input-type" class="form-control">
+                        <option value="每天">每天</option>
+                        <option value="一次性">一次性</option>
+                        <option value="工作日">工作日</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>时间</label>
+                    <input
+                        type="time"
+                        id="input-time"
+                        class="form-control"
+                        value="09:00"
+                    />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        取消
+                    </button>
+                    <button class="btn btn-primary" onclick="saveReminder()">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">操作成功</div>
+
+        <script>
+            // 初始化数据
+            let reminders = [
+                {
+                    id: 1,
+                    title: "点餐",
+                    desc: "不要忘记点外卖",
+                    type: "一次性",
+                    time: "11:30",
+                    active: false,
+                },
+                {
+                    id: 2,
+                    title: "周报汇报",
+                    desc: "整理本周工作内容",
+                    type: "工作日",
+                    time: "17:00",
+                    active: true,
+                },
+                {
+                    id: 3,
+                    title: "喝水提醒",
+                    desc: "健康生活",
+                    type: "每天",
+                    time: "10:00",
+                    active: true,
+                },
+            ];
+
+            const listContainer = document.getElementById("reminder-list");
+            const modalOverlay = document.getElementById("modal-overlay");
+
+            // 渲染列表 (改为卡片式)
+            function renderList() {
+                listContainer.innerHTML = "";
+
+                if (reminders.length === 0) {
+                    listContainer.innerHTML =
+                        '<div class="empty-state">暂无提醒，快去添加一个吧~</div>';
+                    return;
+                }
+
+                reminders.forEach((item) => {
+                    const card = document.createElement("div");
+                    card.className = "reminder-card";
+                    // 拼接 meta 信息，例如：一次性 · 11:30 · 描述
+                    const metaText = `${item.type} · ${item.time} · ${item.desc}`;
+
+                    card.innerHTML = `
+                    <div class="card-left">
+                        <label class="switch">
+                            <input type="checkbox" ${item.active ? "checked" : ""} onchange="toggleStatus(${item.id})">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="card-info">
+                            <div class="card-title">${item.title}</div>
+                            <div class="card-meta">${metaText}</div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-text action-edit" onclick="openModal('edit', ${item.id})">编辑</button>
+                        <button class="action-text action-delete" onclick="deleteReminder(${item.id})">删除</button>
+                    </div>
+                `;
+                    listContainer.appendChild(card);
+                });
+            }
+
+            // 切换页面
+            function switchPage(pageName, navEl) {
+                document
+                    .querySelectorAll(".page")
+                    .forEach((p) => p.classList.remove("active-page"));
+                document
+                    .getElementById(`page-${pageName}`)
+                    .classList.add("active-page");
+                document
+                    .querySelectorAll(".nav-item")
+                    .forEach((n) => n.classList.remove("active"));
+                navEl.classList.add("active");
+            }
+
+            // 打开模态框
+            function openModal(mode, id = null) {
+                const titleEl = document.getElementById("modal-title");
+                const inputId = document.getElementById("input-id");
+                const inputTitle = document.getElementById("input-title");
+                const inputDesc = document.getElementById("input-desc");
+                const inputType = document.getElementById("input-type");
+                const inputTime = document.getElementById("input-time");
+
+                if (mode === "edit" && id) {
+                    const item = reminders.find((r) => r.id === id);
+                    titleEl.innerText = "编辑提醒";
+                    inputId.value = item.id;
+                    inputTitle.value = item.title;
+                    inputDesc.value = item.desc;
+                    inputType.value = item.type;
+                    inputTime.value = item.time;
+                } else {
+                    titleEl.innerText = "添加提醒";
+                    inputId.value = "";
+                    inputTitle.value = "";
+                    inputDesc.value = "";
+                    inputType.value = "每天";
+                    inputTime.value = "09:00";
+                }
+                modalOverlay.classList.add("open");
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove("open");
+            }
+
+            // 保存逻辑
+            function saveReminder() {
+                const id = document.getElementById("input-id").value;
+                const title = document
+                    .getElementById("input-title")
+                    .value.trim();
+                const desc = document.getElementById("input-desc").value.trim();
+                const type = document.getElementById("input-type").value;
+                const time = document.getElementById("input-time").value;
+
+                if (!title) {
+                    showToast("请输入标题");
+                    return;
+                }
+
+                if (id) {
+                    // 编辑
+                    const index = reminders.findIndex((r) => r.id == id);
+                    if (index !== -1) {
+                        reminders[index] = {
+                            ...reminders[index],
+                            title,
+                            desc,
+                            type,
+                            time,
+                        };
+                    }
+                    showToast("修改成功");
+                } else {
+                    // 新增
+                    const newId = Date.now();
+                    reminders.push({
+                        id: newId,
+                        title,
+                        desc,
+                        type,
+                        time,
+                        active: true,
+                    });
+                    showToast("添加成功");
+                }
+                closeModal();
+                renderList();
+            }
+
+            // 删除逻辑
+            function deleteReminder(id) {
+                if (confirm("确定要删除这条提醒吗？")) {
+                    reminders = reminders.filter((r) => r.id !== id);
+                    renderList();
+                    showToast("已删除");
+                }
+            }
+
+            // 开关状态切换
+            function toggleStatus(id) {
+                const item = reminders.find((r) => r.id === id);
+                if (item) {
+                    item.active = !item.active;
+                    // 这里可以添加实际的业务逻辑，比如调用后端API
+                    const msg = item.active ? "提醒已开启" : "提醒已关闭";
+                    showToast(msg);
+                }
+            }
+
+            function showToast(msg) {
+                const toast = document.getElementById("toast");
+                toast.innerText = msg;
+                toast.classList.add("show");
+                setTimeout(() => toast.classList.remove("show"), 2000);
+            }
+
+            // 初始化
+            renderList();
+
+            // 点击遮罩层关闭
+            modalOverlay.addEventListener("click", (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+        </script>
+    </body>
+</html>

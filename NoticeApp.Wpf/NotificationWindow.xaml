@@ -1,0 +1,57 @@
+﻿<Window x:Class="NoticeApp.Wpf.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="360"
+        Height="154"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ResizeMode="NoResize">
+    <Grid Background="Transparent" SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Border CornerRadius="12"
+                Background="White"
+                BorderBrush="#D8DEE9"
+                BorderThickness="1"
+                Padding="14,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="提醒"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryTextBrush}" />
+
+                <TextBlock x:Name="MessageTextBlock"
+                           Grid.Row="1"
+                           Margin="0,8,0,0"
+                           TextWrapping="Wrap"
+                           Foreground="{StaticResource PrimaryTextBrush}" />
+
+                <Grid Grid.Row="2" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="TimeTextBlock"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               FontSize="12" />
+
+                    <Button Grid.Column="1"
+                            Width="76"
+                            Height="32"
+                            Content="已知晓"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Click="AcknowledgeButton_Click" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

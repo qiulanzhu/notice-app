@@ -1,0 +1,194 @@
+<Window x:Class="NoticeApp.Wpf.ReminderEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="提醒编辑"
+        Width="700"
+        Height="650"
+        MinWidth="620"
+        MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Background="Transparent">
+    <Border CornerRadius="14"
+            Background="{StaticResource BackgroundBrush}"
+            BorderBrush="#CDD5E4"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="56" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="44" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="WindowTitleTextBlock"
+                           Text="添加提醒"
+                           Margin="20,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryTextBrush}" />
+                <Button Grid.Column="1"
+                        Margin="0,10,10,10"
+                        Width="34"
+                        Content="×"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="CloseButton_Click" />
+            </Grid>
+
+            <Border Grid.Row="1"
+                    Margin="20,8,20,20"
+                    CornerRadius="14"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Background="{StaticResource SurfaceBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="22,20,22,20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Text="提醒内容"
+                                   FontSize="14"
+                                   Foreground="{StaticResource SecondaryTextBrush}" />
+                        <TextBox x:Name="DescriptionTextBox"
+                                 Grid.Row="1"
+                                 Margin="0,8,0,14"
+                                 Height="90"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalContentAlignment="Top" />
+
+                        <TextBlock Grid.Row="2"
+                                   Text="提醒模式"
+                                   FontSize="14"
+                                   Foreground="{StaticResource SecondaryTextBrush}" />
+                        <ComboBox x:Name="ModeComboBox"
+                                  Grid.Row="3"
+                                  Margin="0,8,0,14"
+                                  Width="220"
+                                  HorizontalAlignment="Left"
+                                  SelectionChanged="ModeComboBox_SelectionChanged">
+                            <ComboBoxItem Content="一次性提醒" />
+                            <ComboBoxItem Content="周期性提醒" />
+                        </ComboBox>
+
+                        <Border x:Name="OneTimePanel"
+                                Grid.Row="4"
+                                Margin="0,0,0,12"
+                                Padding="14,12"
+                                CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                Background="#F8FAFE">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="触发时间" Foreground="{StaticResource SecondaryTextBrush}" />
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                                    <DatePicker x:Name="OneTimeDatePicker" Width="170" />
+                                    <TextBox x:Name="OneTimeTimeTextBox"
+                                             Width="120"
+                                             Margin="10,0,0,0"
+                                             VerticalContentAlignment="Center"
+                                             Text="09:00:00" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border x:Name="RecurringPanel"
+                                Grid.Row="5"
+                                Margin="0,0,0,16"
+                                Padding="14,12"
+                                CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                Background="#F8FAFE">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220" />
+                                    <ColumnDefinition Width="160" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="重复规则" Foreground="{StaticResource SecondaryTextBrush}" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="触发时刻" Foreground="{StaticResource SecondaryTextBrush}" />
+
+                                <ComboBox x:Name="RecurrenceComboBox"
+                                          Grid.Row="1"
+                                          Grid.Column="0"
+                                          Margin="0,8,10,0"
+                                          SelectionChanged="RecurrenceComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="每天" />
+                                    <ComboBoxItem Content="每周" />
+                                    <ComboBoxItem Content="每月" />
+                                </ComboBox>
+
+                                <TextBox x:Name="RecurringTimeTextBox"
+                                         Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="0,8,10,0"
+                                         Text="09:00:00"
+                                         VerticalContentAlignment="Center" />
+
+                                <WrapPanel x:Name="WeekDaysPanel"
+                                           Grid.Row="2"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="3"
+                                           Margin="0,14,0,0">
+                                    <CheckBox x:Name="MondayCheckBox" Content="周一" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="TuesdayCheckBox" Content="周二" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="WednesdayCheckBox" Content="周三" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="ThursdayCheckBox" Content="周四" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="FridayCheckBox" Content="周五" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="SaturdayCheckBox" Content="周六" Margin="0,0,18,8" />
+                                    <CheckBox x:Name="SundayCheckBox" Content="周日" Margin="0,0,18,8" />
+                                    <StackPanel x:Name="MonthlyDayPanel" Orientation="Horizontal" Margin="10,0,0,0">
+                                        <TextBlock Text="每月日期" VerticalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" />
+                                        <ComboBox x:Name="MonthlyDayComboBox"
+                                                  Width="90"
+                                                  Margin="10,0,0,0" />
+                                    </StackPanel>
+                                </WrapPanel>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Row="6"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+                            <Button Width="98"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Content="取消"
+                                    Click="CancelButton_Click" />
+                            <Button Width="108"
+                                    Margin="10,0,0,0"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Content="保存"
+                                    Click="SaveButton_Click" />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
